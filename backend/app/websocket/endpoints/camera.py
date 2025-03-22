@@ -5,6 +5,7 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
+from app.config import settings
 from app.database.qdrant import QdrantDatabase
 from app.services.AIService import AIService
 from app.services.ClickPictureService import ClickPictureService
@@ -13,7 +14,7 @@ from app.services.WebSocketService import WebSocketService
 from app.utils.logger import CustomLogger
 
 router = APIRouter()
-click_picture_service = ClickPictureService()
+click_picture_service = ClickPictureService(settings.GCP_BUCKET_NAME)
 ocr_service = OCRService()
 ai_service = AIService()
 qdrant_db = QdrantDatabase()

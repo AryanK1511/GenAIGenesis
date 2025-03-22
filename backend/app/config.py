@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
     LOCATION: str
+    GCP_BUCKET_NAME: str  # Name of the GCP bucket for storing captures
     QDRANT_URL: str = "http://localhost:6333"
     QDRANT_API_KEY: str = ""
     QDRANT_COLLECTION_NAME: str = "genaigenesis"
