@@ -15,14 +15,24 @@ interface SourceImagesProps {
 
 export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
   const [selectedImage, setSelectedImage] = useState<SourceImage | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
-  console.log(images);
+  const handleImageError = () => {
+    console.error('Image loading error');
+    setImageError('Failed to load image. Please try again.');
+  };
+
+  const relevantImages = images.filter((image) => image.score >= 0.5);
+
+  if (relevantImages.length === 0) {
+    return null;
+  }
 
   return (
     <div className="mb-6">
       <h3 className="text-sm font-medium text-slate-700 mb-3">Source Pages</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {images.map((image, index) => (
+        {relevantImages.map((image, index) => (
           <div
             key={index}
             className="relative group rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
@@ -34,6 +44,9 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
                 alt={`Page ${image.page_number}`}
                 fill
                 className="object-cover"
+                onError={handleImageError}
+                priority={index < 3}
+                sizes="(max-width: 768px) 50vw, 33vw"
               />
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
@@ -60,12 +73,20 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
               </button>
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src={`/api/images/${selectedImage.image_path.split('/').pop()}`}
+                  src={selectedImage.image_path}
                   alt={`Page ${selectedImage.page_number}`}
                   fill
                   className="object-contain"
+                  onError={handleImageError}
+                  priority
+                  sizes="100vw"
                 />
               </div>
+              {imageError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                  <p className="text-white text-center p-4">{imageError}</p>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

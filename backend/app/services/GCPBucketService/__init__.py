@@ -15,7 +15,19 @@ class GCPBucketService:
         self.bucket = self.storage_client.bucket(bucket_name)
 
     def get_public_url(self, blob_name: str) -> str:
-        return f"https://storage.googleapis.com/{self.bucket_name}/{blob_name}"
+        """Generate a signed URL for the blob that expires in 1 hour."""
+        try:
+            blob = self.bucket.blob(blob_name)
+            url = blob.generate_signed_url(
+                version="v4",
+                expiration=3600,
+                method="GET",
+            )
+            return url
+        except Exception as e:
+            CustomLogger.log("ERROR", f"Error generating signed URL: {str(e)}")
+            # Fallback to public URL if signed URL generation fails
+            return f"https://storage.googleapis.com/{self.bucket_name}/{blob_name}"
 
     def upload_file(
         self, file_path: str, destination_blob_name: Optional[str] = None

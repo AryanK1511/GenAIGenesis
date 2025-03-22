@@ -19,12 +19,9 @@ ocr_service = OCRService()
 ai_service = AIService()
 qdrant_db = QdrantDatabase()
 
-accumulated_text = ""
-
 
 @router.websocket("/click-picture")
 async def camera_websocket_endpoint(websocket: WebSocket):
-    global accumulated_text
     camera_id = None
 
     try:
@@ -46,7 +43,6 @@ async def camera_websocket_endpoint(websocket: WebSocket):
 
                     qdrant_db.delete_all_documents()
                     click_picture_service.delete_captures()
-                    accumulated_text = ""
 
                     response = {"action": "start"}
                     await websocket.send_text(json.dumps(response))
@@ -84,6 +80,7 @@ async def camera_websocket_endpoint(websocket: WebSocket):
                         CustomLogger.create_log("info", f"OCR Text: {ocr_text}")
 
                         cleaned_text = await ai_service.cleanup_ocr_text(ocr_text)
+                        CustomLogger.create_log("info", f"Cleaned Text: {cleaned_text}")
                         qdrant_db.add_document(
                             cleaned_text, page_number, result["file_path"]
                         )
