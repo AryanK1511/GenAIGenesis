@@ -106,8 +106,13 @@ async def camera_websocket_endpoint(websocket: WebSocket):
 
                         await websocket.send_text(json.dumps(response))
 
+                        await WebSocketService.broadcast_to_frontend(
+                            {"action": "finished"}
+                        )
+
                         click_picture_service.release_camera()
                         click_picture_service.delete_captures()
+
                         await asyncio.sleep(2)
                         await websocket.close()
                         return

@@ -1,4 +1,4 @@
-# backend/app/api/v1/router.py
+# backend/app/api/router.py
 
 from fastapi import APIRouter
 

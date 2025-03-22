@@ -1,1 +1,1 @@
-# backend/app/api/v1/endpoints/__init__.py
+# backend/app/api/endpoints/__init__.py

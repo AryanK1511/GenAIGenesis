@@ -1,4 +1,4 @@
-# backend/app/api/v1/endpoints/chat.py
+# backend/app/api/endpoints/chat.py
 
 from typing import List, Optional
 
