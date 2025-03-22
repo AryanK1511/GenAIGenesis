@@ -1,64 +1,61 @@
-import RPi.GPIO as GPIO
+import pigpio
 import time
 
-# Setup GPIO mode
-GPIO.setmode(GPIO.BCM)
-
-# Define the GPIO pin connected to the servo
-LICKER_PIN = 18
+# Set the GPIO pin for the servosudo
 FLIPPER_PIN = 17
+LICKER_PIN = 27
 
-# Setup the servo pin as output
-GPIO.setup(LICKER_PIN, GPIO.OUT)
-GPIO.setup(FLIPPER_PIN, GPIO.OUT)
 
-# Create a PWM instance on the servo pin with a frequency of 50Hz
-licker_pwm = GPIO.PWM(LICKER_PIN, 50)
-flipper_pwm = GPIO.PWM(FLIPPER_PIN, 50)
 
-def flip_licker():
+# Set the PWM frequency (e.g., 50 Hz)
+PWM_FREQUENCY = 50
+
+# Set the pulse width for 0 degrees (e.g., 500 microseconds)
+MIN_PULSE = 500
+
+# Set the pulse width for 180 degrees (e.g., 2500 microseconds)
+MAX_PULSE = 2500
+
+# Set the servo to a specific angle
+def set_licker_angle(angle, pi):
+    # Calculate the pulse width for the given angle
+    pulse_width = (angle - 0) / 180 * (MAX_PULSE - MIN_PULSE) + MIN_PULSE
+
+    # Set the PWM duty cycle
+    pi.set_servo_pulsewidth(LICKER_PIN, pulse_width)
+
+def set_flipper_angle(angle, pi):
+    # Calculate the pulse width for the given angle
+    pulse_width = (angle - 0) / 180 * (MAX_PULSE - MIN_PULSE) + MIN_PULSE
+
+    # Set the PWM duty cycle
+    pi.set_servo_pulsewidth(FLIPPER_PIN, pulse_width)
+
+# Main loop
+def flip():
+    # Create a pigpio instance
+    pi = pigpio.pi()
+    print("Flipper and Licker are ready")
     try:
-        # Start PWM with a duty cycle of 0 (servo in neutral position)
-        licker_pwm.start(0)
-        
-        # Move licker by 1 rotation
-        licker_pwm.ChangeDutyCycle(8.5)
-        time.sleep(1) # Wait for the servo to move 1 rotation
+        set_flipper_angle(0, pi)
+        time.sleep(0.5) # Wait for the flipper to reach 0 degrees
 
-        # Stop PWM
-        licker_pwm.ChangeDutyCycle(0)
+        set_licker_angle(180, pi)
+        time.sleep(2) # Wait for the licker to get the page up
+
+        set_flipper_angle(180, pi)
+        time.sleep(1) # Wait for the flipper to flip the page
+
+    except KeyboardInterrupt:
+        pass
+
     finally:
-        # Cleanup GPIO resources
-        licker_pwm.stop()
-        GPIO.cleanup()
+        # Stop the PWM signal
+        pi.set_servo_pulsewidth(LICKER_PIN, 0)
+        pi.set_servo_pulsewidth(FLIPPER_PIN, 0)
+        pi.stop()
 
-def flip_flipper():
-    try:
-        # Start PWM with a duty cycle of 0 (servo in neutral position)
-        flipper_pwm.start(0)
-        
-        # Move flipper to 90 degrees (adjust duty cycle as needed for your servo)
-        flipper_pwm.ChangeDutyCycle(8.5)
-        time.sleep(1)  # Wait for the servo to move 90 degrees
-        
-        # Move flipper back to 0 degrees
-        flipper_pwm.ChangeDutyCycle(6.5)
-        time.sleep(1)  # Wait for the servo to move
-        
-        # Stop PWM
-        flipper_pwm.ChangeDutyCycle(0)
-    finally:
-        # Cleanup GPIO resources
-        flipper_pwm.stop()
-        GPIO.cleanup()
 
-async def flip():
-    try:
-        flip_licker()
-        flip_flipper()
-    except e:
-        print(f"\033[91m[ERROR]\033[0m An exception occurred during flipping: {e}")
-
-# Example usage
 if __name__ == "__main__":
     flip()
+    

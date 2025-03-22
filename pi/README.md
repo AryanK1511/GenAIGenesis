@@ -7,3 +7,9 @@
 
 ### Requirements Freeze
 `pip freeze > requirements.txt`
+
+### Install Packages
+`pip install -r requirements.txt`
+
+### Pigpio
+`sudo pigpiod`
