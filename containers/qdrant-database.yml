@@ -1,0 +1,11 @@
+# https://hub.docker.com/r/qdrant/qdrant
+
+services:
+  # You can access the Qdrant UI at localhost:6333/dashboard
+  qdrant:
+    image: qdrant/qdrant:v1.13.4@sha256:318c11b72aaab96b36e9662ad244de3cabd0653a1b942d4e8191f18296c81af0
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - '6333:6333' # REST API
+      - '6334:6334' # gRPC API
