@@ -61,6 +61,9 @@ class ClickPictureService:
             if not ret:
                 raise Exception("Failed to capture frame")
 
+            frame = cv2.flip(frame, 0)
+            frame = cv2.flip(frame, 1)
+
             # List existing captures to determine next number
             result = self.bucket_service.list_files(prefix="captures/capture_")
             if not result["success"]:
