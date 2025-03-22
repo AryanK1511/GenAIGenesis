@@ -2,6 +2,7 @@
 
 import asyncio
 from websockets.asyncio.server import serve
+from flip import flip
 
 async def send_message(wbs, msg):
     await wbs.send(msg)
@@ -11,6 +12,8 @@ async def hello(websocket):
     await send_message(websocket, "start")
     for i in range(3):
         print("--- Pi fliping ---")
+        await flip()
+        print("--- Pi flipping Completed ---")
         await asyncio.sleep(5)
         await send_message(websocket, "click")
     await send_message(websocket, "process")
