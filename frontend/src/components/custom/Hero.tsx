@@ -118,14 +118,6 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                 </h1>
                 <p className="text-md sm:text-lg lg-text-xl text-zinc-500 max-w-2xl mx-auto">
                   A personalized AI chatbot designed to know everything about{' '}
-                  <a
-                    href="https://www.linkedin.com/in/aryank1511/"
-                    target="_blank"
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent font-semibold hover:opacity-80 transition-opacity"
-                  >
-                    Aryan
-                  </a>
-                  .
                 </p>
               </motion.div>
               <motion.div

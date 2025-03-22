@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
@@ -12,6 +12,14 @@ body {
   .text-balance {
     overflow-wrap: break-word;
   }
+}
+
+.outfit-font {
+  font-family: 'Outfit', sans-serif;
+}
+
+.pt-serif-font {
+  font-family: 'PT Serif', serif;
 }
 
 @layer base {

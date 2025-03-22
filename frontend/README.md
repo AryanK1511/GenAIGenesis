@@ -1,4 +1,4 @@
-# Voyager Frontend
+# Frontend
 
 ## Running the frontend locally
 
@@ -9,7 +9,3 @@ cd frontend
 pnpm install
 pnpm run dev
 ```
-
-## Author
-
-[Aryan Khurana](https://github.com/AryanK1511)
