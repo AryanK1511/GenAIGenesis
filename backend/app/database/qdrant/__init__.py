@@ -5,7 +5,6 @@ import os
 from langchain_core.documents import Document
 from langchain_google_vertexai import VertexAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
 
@@ -85,21 +84,16 @@ class QdrantDatabase:
             vectors_config=VectorParams(size=768, distance=Distance.COSINE),
         )
 
-    def add_document(self, text: str):
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000, chunk_overlap=200, add_start_index=True
+    def add_document(self, text: str, page_number: str, image_path: str):
+        document = Document(
+            page_content=text,
+            metadata={"page_number": page_number, "image_path": image_path},
         )
-        texts = text_splitter.split_text(text)
-        documents = [
-            Document(
-                page_content=t,
-                metadata={"page_number": i + 1},
-            )
-            for i, t in enumerate(texts)
-        ]
-        CustomLogger.create_log("info", f"Adding {len(documents)} documents to Qdrant")
-        self.vector_store.add_documents(documents)
-        CustomLogger.create_log("info", "Documents added to Qdrant")
+        CustomLogger.create_log(
+            "info", f"Adding document for page {page_number} to Qdrant"
+        )
+        self.vector_store.add_documents([document])
+        CustomLogger.create_log("info", "Document added to Qdrant")
 
     def search(self, query, k=2):
         CustomLogger.create_log("info", f"Searching for {query}")

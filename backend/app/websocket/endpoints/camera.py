@@ -45,7 +45,7 @@ async def camera_websocket_endpoint(websocket: WebSocket):
 
                     qdrant_db.delete_all_documents()
                     click_picture_service.delete_captures()
-                    accumulated_text = ""  # Clear the text
+                    accumulated_text = ""
 
                     response = {"action": "start"}
                     await websocket.send_text(json.dumps(response))
@@ -66,9 +66,6 @@ async def camera_websocket_endpoint(websocket: WebSocket):
                         CustomLogger.create_log(
                             "info", f"Captured picture: {result['file_path']}"
                         )
-                        ocr_text = ocr_service.ocr_image(result["file_path"])
-                        accumulated_text += f"{ocr_text}\n\n"
-                        CustomLogger.create_log("info", f"OCR Text: {ocr_text}")
 
                         page_number = str(
                             result["file_path"]
@@ -76,7 +73,27 @@ async def camera_websocket_endpoint(websocket: WebSocket):
                             .split(".")[0]
                             .split("_")[1]
                         )
-                        CustomLogger.create_log("info", f"page number: {page_number}")
+                        scanning_response = {
+                            "action": "scanning",
+                            "page_number": page_number,
+                        }
+                        await WebSocketService.broadcast_to_frontend(scanning_response)
+
+                        ocr_text = ocr_service.ocr_image(result["file_path"])
+                        CustomLogger.create_log("info", f"OCR Text: {ocr_text}")
+
+                        cleaned_text = await ai_service.cleanup_ocr_text(ocr_text)
+                        qdrant_db.add_document(
+                            cleaned_text, page_number, result["file_path"]
+                        )
+
+                        processing_response = {
+                            "action": "processing",
+                            "page_number": page_number,
+                        }
+                        await WebSocketService.broadcast_to_frontend(
+                            processing_response
+                        )
 
                         response = {
                             "action": "click",
@@ -93,33 +110,15 @@ async def camera_websocket_endpoint(websocket: WebSocket):
                     await websocket.send_text(json.dumps(response))
                     await WebSocketService.broadcast_to_frontend(response)
 
-                elif message.get("action") == "process":
-                    if accumulated_text.strip():  # Check if text is not empty
-                        response = {"action": "process"}
-                        await WebSocketService.broadcast_to_frontend(
-                            {"action": "process"}
-                        )
-                        cleaned_text = await ai_service.cleanup_ocr_text(
-                            accumulated_text
-                        )
-                        qdrant_db.add_document(cleaned_text)
+                elif message.get("action") == "end":
+                    response = {"action": "end"}
+                    await WebSocketService.broadcast_to_frontend(response)
 
-                        await websocket.send_text(json.dumps(response))
+                    click_picture_service.release_camera()
 
-                        await WebSocketService.broadcast_to_frontend(
-                            {"action": "finished"}
-                        )
-
-                        click_picture_service.release_camera()
-                        click_picture_service.delete_captures()
-
-                        await asyncio.sleep(2)
-                        await websocket.close()
-                        return
-                    else:
-                        response = {"status": "error", "message": "No text to embed"}
-                        await websocket.send_text(json.dumps(response))
-                        await WebSocketService.broadcast_to_frontend(response)
+                    await asyncio.sleep(2)
+                    await websocket.close()
+                    return
                 else:
                     response = {"status": "error", "message": "Invalid action"}
                     await websocket.send_text(json.dumps(response))
