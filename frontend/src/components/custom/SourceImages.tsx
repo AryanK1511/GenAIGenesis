@@ -30,7 +30,7 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
           >
             <div className="aspect-[3/4] relative">
               <Image
-                src={`/api/images/${image.image_path.split('/')[1]}`}
+                src={image.image_path}
                 alt={`Page ${image.page_number}`}
                 fill
                 className="object-cover"
