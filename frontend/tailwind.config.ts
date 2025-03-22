@@ -11,7 +11,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'dark-background': '#0b0a0b',
+        'custom-blue': '#3686ff',
+        'custom-yellow': '#f5d565',
+        'custom-green': '#a0ecb0',
+        'custom-purple': '#d2b5f9',
+        'custom-red': '#ff646',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

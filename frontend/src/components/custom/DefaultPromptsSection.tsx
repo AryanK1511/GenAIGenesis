@@ -7,7 +7,7 @@ import { DefaultPrompts } from '@/lib';
 export const DefaultPromptsSection: FC = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full gap-8">
-      {DefaultPrompts.map((prompt, index) => {
+      {/* {DefaultPrompts.map((prompt, index) => {
         const Icon = prompt.icon;
         const isLastItem = index === DefaultPrompts.length - 1;
         return (
@@ -27,7 +27,7 @@ export const DefaultPromptsSection: FC = () => {
             <p className="text-zinc-400 text-xs group-hover:text-zinc-300">{prompt.description}</p>
           </div>
         );
-      })}
+      })} */}
     </div>
   );
 };

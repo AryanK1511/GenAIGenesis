@@ -1,15 +1,20 @@
 # backend/app/services/ClickPictureService/__init__.py
 
 import os
+import time
 
 import cv2
 
+from app.services.GCPBucketService import GCPBucketService
 from app.utils.logger import CustomLogger
 
 
 class ClickPictureService:
-    def __init__(self):
+    def __init__(self, bucket_name: str):
         self.camera = None
+        self.bucket_service = GCPBucketService(bucket_name)
+        self.temp_dir = "temp_captures"
+        os.makedirs(self.temp_dir, exist_ok=True)
 
     def initialize_camera(self):
         try:
@@ -32,9 +37,17 @@ class ClickPictureService:
 
     def delete_captures(self):
         try:
-            for file in os.listdir("captures"):
-                if file.startswith("capture_") and file.endswith(".jpg"):
-                    os.remove(os.path.join("captures", file))
+            # List all captures in the bucket
+            result = self.bucket_service.list_files(prefix="captures/")
+            if not result["success"]:
+                return result
+
+            # Delete each capture
+            for file_name in result["files"]:
+                delete_result = self.bucket_service.delete_file(file_name)
+                if not delete_result["success"]:
+                    return delete_result
+
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -44,16 +57,19 @@ class ClickPictureService:
             if self.camera is None or not self.camera.isOpened():
                 raise Exception("Camera is not initialized")
 
-            os.makedirs("captures", exist_ok=True)
-
             ret, frame = self.camera.read()
             if not ret:
                 raise Exception("Failed to capture frame")
 
+            # List existing captures to determine next number
+            result = self.bucket_service.list_files(prefix="captures/capture_")
+            if not result["success"]:
+                return result
+
             existing_captures = [
                 f
-                for f in os.listdir("captures")
-                if f.startswith("capture_") and f.endswith(".jpg")
+                for f in result["files"]
+                if f.startswith("captures/capture_") and f.endswith(".jpg")
             ]
             next_number = 1
             if existing_captures:
@@ -62,11 +78,21 @@ class ClickPictureService:
                 ]
                 next_number = max(numbers) + 1
 
-            filename = f"capture_{next_number}.jpg"
-            file_path = os.path.join("captures", filename)
+            # Save temporarily to local file
+            temp_filename = f"capture_{next_number}.jpg"
+            temp_file_path = os.path.join(self.temp_dir, temp_filename)
+            cv2.imwrite(temp_file_path, frame)
 
-            cv2.imwrite(file_path, frame)
-            return {"success": True, "file_path": file_path}
+            # Upload to GCS
+            gcs_filename = f"captures/{temp_filename}"
+            upload_result = self.bucket_service.upload_file(
+                temp_file_path, gcs_filename
+            )
+
+            # Clean up temporary file
+            os.remove(temp_file_path)
+
+            return upload_result
 
         except Exception as e:
             return {"success": False, "error": str(e)}

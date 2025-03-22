@@ -48,14 +48,22 @@ export interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
-export type ChatMessageProps = {
+export type SourceImage = {
+  page_number: string;
+  image_path: string;
+  score: number;
+};
+
+export interface ChatMessageProps {
   role: 'user' | 'assistant';
   content: string;
-};
+  sourceImages?: SourceImage[];
+}
 
 export type Message = {
   role: 'user' | 'assistant';
   content: string;
+  sourceImages?: SourceImage[];
 };
 
 export type ModelSelectorProps = {
