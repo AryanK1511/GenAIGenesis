@@ -5,13 +5,14 @@
 import { type FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Activity, Wifi, WifiOff } from 'lucide-react';
+import { Wifi, WifiOff } from 'lucide-react';
 
 type WebSocketState = 'disconnected' | 'connected' | 'scanning' | 'processing' | 'finished';
 
 interface WebSocketMessage {
-  action: 'start' | 'click' | 'process' | 'finished';
+  action: 'start' | 'scanning' | 'processing' | 'end';
   page_number?: number;
+  ocr_text?: string;
 }
 
 export const WebSocketStateManager: FC = () => {
@@ -33,16 +34,19 @@ export const WebSocketStateManager: FC = () => {
         case 'start':
           setState('connected');
           break;
-        case 'click':
+        case 'scanning':
           setState('scanning');
           if (message.page_number) {
             setCurrentPage(message.page_number);
           }
           break;
-        case 'process':
+        case 'processing':
           setState('processing');
+          if (message.page_number) {
+            setCurrentPage(message.page_number);
+          }
           break;
-        case 'finished':
+        case 'end':
           setState('finished');
           router.push('/chat');
           break;
@@ -214,36 +218,60 @@ export const WebSocketStateManager: FC = () => {
                                 {currentPage}
                               </div>
                               <div className="text-sm text-slate-500 text-center">
-                                Page {currentPage}
+                                Scanning Page {currentPage}
                               </div>
                             </div>
                             <div className="mt-8 w-full max-w-xs">
                               <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div className="h-full w-[60%] bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-500" />
+                                <div className="h-full w-[30%] bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-500" />
                               </div>
                             </div>
                           </div>
                         )}
 
                         {state === 'processing' && (
-                          <div className="space-y-6">
-                            <div className="w-20 h-20 rounded-full bg-amber-50 flex items-center justify-center mx-auto">
-                              <Activity className="w-12 h-12 text-amber-500" />
+                          <div className="flex flex-col items-center justify-center h-full">
+                            <div className="relative">
+                              <div className="text-7xl font-bold text-amber-600 mb-2">
+                                {currentPage}
+                              </div>
+                              <div className="text-sm text-slate-500 text-center">
+                                Processing Page {currentPage}
+                              </div>
                             </div>
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <p className="text-xl font-semibold text-slate-800">
-                                  Processing Notes
-                                </p>
-                                <p className="text-sm text-slate-500">
-                                  Converting handwriting to digital format
-                                </p>
+                            <div className="mt-8 w-full max-w-xs">
+                              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="h-full w-[60%] bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500" />
                               </div>
-                              <div className="w-full max-w-xs mx-auto">
-                                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                                  <div className="h-full w-[90%] bg-amber-500 rounded-full transition-all duration-500" />
-                                </div>
-                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {state === 'finished' && (
+                          <div className="space-y-6">
+                            <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto">
+                              <svg
+                                className="w-12 h-12 text-green-500"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                            <div className="space-y-2">
+                              <p className="text-xl font-semibold text-slate-800">
+                                Notes Processed Successfully
+                              </p>
+                              <p className="text-sm text-slate-500">
+                                Redirecting to chat interface...
+                              </p>
                             </div>
                           </div>
                         )}
@@ -260,12 +288,20 @@ export const WebSocketStateManager: FC = () => {
                       Cancel
                     </Button>
                     <Button
-                      disabled={state === 'disconnected'}
+                      disabled={
+                        state === 'disconnected' || state === 'scanning' || state === 'processing'
+                      }
                       className={`${
-                        state === 'disconnected' ? 'bg-slate-400' : 'bg-blue-600 hover:bg-blue-700'
+                        state === 'disconnected' || state === 'scanning' || state === 'processing'
+                          ? 'bg-slate-400'
+                          : 'bg-blue-600 hover:bg-blue-700'
                       } text-white px-6 py-4 text-sm font-medium`}
                     >
-                      {state === 'processing' ? 'Processing...' : 'Continue'}
+                      {state === 'scanning'
+                        ? 'Scanning...'
+                        : state === 'processing'
+                          ? 'Processing...'
+                          : 'Continue'}
                     </Button>
                   </div>
                 </div>

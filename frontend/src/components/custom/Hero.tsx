@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import { DefaultPromptsSection, SearchBar, AuroraText, ChatMessage } from '@/components';
 import { ApiHelper } from '@/lib';
-import type { HeroProps, Message } from '@/lib';
+import type { HeroProps, Message, SourceImage } from '@/lib';
 
 export const Hero: FC<HeroProps> = ({ currentModel }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -67,6 +67,7 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
 
       const decoder = new TextDecoder();
       let accumulatedContent = '';
+      let currentSourceImages: SourceImage[] = [];
 
       while (true) {
         const { done, value } = await reader.read();
@@ -78,13 +79,32 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const content = line.slice(6);
-            accumulatedContent += content;
-            setStreamedContent(accumulatedContent);
+            try {
+              const data = JSON.parse(content);
+              if (data.type === 'source_images') {
+                currentSourceImages = data.images;
+              } else if (data.type === 'response') {
+                accumulatedContent += data.content;
+                setStreamedContent(accumulatedContent);
+              }
+            } catch (error) {
+              console.warn('Failed to parse streaming data:', error);
+              // If parsing fails, treat it as plain text
+              accumulatedContent += content;
+              setStreamedContent(accumulatedContent);
+            }
           }
         }
       }
 
-      setMessages((prev) => [...prev, { role: 'assistant', content: accumulatedContent }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: accumulatedContent,
+          sourceImages: currentSourceImages,
+        },
+      ]);
       setStreamedContent('');
     } catch (error) {
       console.error('Error streaming response:', error);
@@ -166,7 +186,11 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="w-full"
                     >
-                      <ChatMessage role={message.role} content={message.content} />
+                      <ChatMessage
+                        role={message.role}
+                        content={message.content}
+                        sourceImages={message.sourceImages}
+                      />
                     </motion.div>
                   ))}
                   {(isWaitingForStream || (isStreaming && streamedContent)) && (
