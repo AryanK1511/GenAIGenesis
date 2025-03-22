@@ -95,14 +95,16 @@ async def camera_websocket_endpoint(websocket: WebSocket):
 
                 elif message.get("action") == "process":
                     if accumulated_text.strip():  # Check if text is not empty
+                        response = {"action": "process"}
+                        await WebSocketService.broadcast_to_frontend(
+                            {"action": "process"}
+                        )
                         cleaned_text = await ai_service.cleanup_ocr_text(
                             accumulated_text
                         )
                         qdrant_db.add_document(cleaned_text)
 
-                        response = {"action": "process"}
                         await websocket.send_text(json.dumps(response))
-                        await WebSocketService.broadcast_to_frontend(response)
 
                         click_picture_service.release_camera()
                         click_picture_service.delete_captures()
