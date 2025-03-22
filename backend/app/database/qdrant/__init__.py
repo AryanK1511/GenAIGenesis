@@ -90,7 +90,13 @@ class QdrantDatabase:
             chunk_size=1000, chunk_overlap=200, add_start_index=True
         )
         texts = text_splitter.split_text(text)
-        documents = [Document(page_content=t) for t in texts]
+        documents = [
+            Document(
+                page_content=t,
+                metadata={"page_number": i + 1},
+            )
+            for i, t in enumerate(texts)
+        ]
         CustomLogger.create_log("info", f"Adding {len(documents)} documents to Qdrant")
         self.vector_store.add_documents(documents)
         CustomLogger.create_log("info", "Documents added to Qdrant")

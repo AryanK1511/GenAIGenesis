@@ -4,6 +4,8 @@ import os
 
 import cv2
 
+from app.utils.logger import CustomLogger
+
 
 class ClickPictureService:
     def __init__(self):
@@ -17,6 +19,10 @@ class ClickPictureService:
             self.camera = cv2.VideoCapture(1)
             if not self.camera.isOpened():
                 self.camera = cv2.VideoCapture(0)
+                CustomLogger.log(
+                    "INFO",
+                    "Could not open camera on index 1, trying index 0",
+                )
                 if not self.camera.isOpened():
                     raise Exception("Could not open camera")
             return True
