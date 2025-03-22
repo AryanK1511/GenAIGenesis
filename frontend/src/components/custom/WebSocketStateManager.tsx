@@ -1,11 +1,11 @@
-// frontend/src/components/custom/WebSocketStateManager.tsx
-
 'use client';
 
 import { type FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Wifi, WifiOff } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, CheckCircle2, AlertCircle, Loader2, Scan, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
 type WebSocketState = 'disconnected' | 'connected' | 'scanning' | 'processing' | 'finished';
 
@@ -25,6 +25,7 @@ export const WebSocketStateManager: FC = () => {
 
     ws.onopen = () => {
       console.log('WebSocket Connected');
+      setState('disconnected'); // Start with red disconnected state
     };
 
     ws.onmessage = (event) => {
@@ -62,254 +63,269 @@ export const WebSocketStateManager: FC = () => {
     };
   }, [router]);
 
-  const getStateColor = () => {
+  const getStatusColor = () => {
     switch (state) {
       case 'disconnected':
-        return 'bg-red-50 border-red-100 text-red-700';
+        return 'bg-destructive text-destructive-foreground';
       case 'connected':
-        return 'bg-green-50 border-green-100 text-green-700';
+        return 'bg-green-500 text-white'; // Changed to green for connected state
       case 'scanning':
-        return 'bg-blue-50 border-blue-100 text-blue-700';
+        return 'bg-amber-500 text-white';
       case 'processing':
-        return 'bg-amber-50 border-amber-100 text-amber-700';
+        return 'bg-purple-500 text-white';
       case 'finished':
-        return 'bg-green-50 border-green-100 text-green-700';
+        return 'bg-green-500 text-white';
+    }
+  };
+
+  const getStatusIcon = () => {
+    switch (state) {
+      case 'disconnected':
+        return <AlertCircle className="h-5 w-5" />;
+      case 'connected':
+        return <CheckCircle2 className="h-5 w-5" />;
+      case 'scanning':
+        return <Scan className="h-5 w-5" />;
+      case 'processing':
+        return <Loader2 className="h-5 w-5 animate-spin" />;
+      case 'finished':
+        return <CheckCircle2 className="h-5 w-5" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-sky-50 bg-[url('/grid-pattern.svg')] relative">
-      {/* Decorative elements */}
-      <div className="absolute top-40 left-20 w-16 h-16 rounded-lg bg-lime-300 rotate-12 z-0" />
-      <div className="absolute top-60 left-32 w-12 h-12 rounded-lg bg-amber-300 -rotate-6 z-0" />
-
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div className="container mx-auto px-6 py-4 flex items-center">
-          <div className="flex items-center">
-            <span className="text-lg font-bold text-slate-800 flex items-center">
-              <span className="flex items-center justify-center w-7 h-7 bg-slate-900 text-white rounded-md mr-2">
-                NB
-              </span>
-              Notebook Buddy
-              <span className="ml-2 text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                BETA
-              </span>
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="min-h-screen flex items-center justify-center px-6 pt-24 relative z-10">
-        <div className="w-full max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Left Column - Text Content */}
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-sm font-medium">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  {state === 'connected' ? 'Ready to go' : state}
-                </div>
-
-                <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight pt-serif-font">
-                  Your Study <span className="text-blue-600">Buddy</span>
+    <main className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="w-full max-w-7xl mx-auto rounded-3xl overflow-hidden relative bg-gradient-to-br">
+        <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16">
+          <div className="flex flex-col justify-center space-y-8">
+            <div className="flex flex-col items-center md:items-start">
+              <div className="flex flex-col md:flex-row items-center mb-4">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-[#1D1D3B] text-center md:text-left leading-tight">
+                  Transform Your Notes Into Interactive <br />
+                  <span className="relative">Study Materials</span>
                 </h1>
-                <p className="text-lg text-slate-600 max-w-lg outfit-font">
-                  Transform your handwritten notes into interactive study materials. Let AI help you
-                  understand, organize, and master your content.
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-4 text-sm font-medium transition-all duration-200 flex items-center justify-center">
-                  Get started for free
-                  <svg
-                    className="ml-2 w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg px-6 py-4 text-sm font-medium transition-all duration-200"
-                >
-                  See how it works
-                </Button>
-              </div>
-
-              <div className="flex items-center space-x-3 text-sm text-slate-500">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs font-medium text-slate-600"
-                    >
-                      {i}
-                    </div>
-                  ))}
-                </div>
-                <p>Over 5k students are using Notebook Buddy</p>
               </div>
             </div>
 
-            {/* Right Column - Status Card */}
-            <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden bg-white shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-100">
-                <div className="p-6">
-                  {/* Status Header */}
-                  <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-gray-600">Over 5k students are using Notebook Buddy</p>
+
+            <p className="text-gray-600 text-sm md:text-base">
+              Let AI help you understand, organize, and master
+              <br />
+              your content with interactive study materials
+            </p>
+
+            <div>
+              <Link
+                href="https://github.com/yourusername/notebook-buddy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-[#1D1D3B] text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-all"
+              >
+                View on GitHub
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <Card className="w-full max-w-md shadow-lg border-0 overflow-hidden bg-white">
+              <CardContent className="p-0">
+                <div className="flex items-center justify-between p-4 border-b">
+                  <div className="flex items-center gap-2">
                     <div>
-                      <h2 className="text-lg font-semibold text-slate-900">Scanner Status</h2>
-                      <p className="text-xs text-slate-500 mt-0.5">Real-time scanning progress</p>
-                    </div>
-                    <div
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium ${getStateColor()}`}
-                    >
-                      {state.charAt(0).toUpperCase() + state.slice(1)}
+                      <h3 className="font-medium text-slate-900">Scanner Status</h3>
+                      <p className="text-xs text-slate-500">Real-time monitoring</p>
                     </div>
                   </div>
+                  <Badge
+                    variant="outline"
+                    className={`${getStatusColor()} flex items-center gap-1.5 px-3 py-1.5`}
+                  >
+                    {getStatusIcon()}
+                    {state === 'connected'
+                      ? 'Waiting'
+                      : state.charAt(0).toUpperCase() + state.slice(1)}
+                  </Badge>
+                </div>
 
-                  {/* Main Status Display */}
-                  <div className="relative h-[320px] rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 mb-6">
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="text-center w-full max-w-sm mx-auto px-4">
-                        {state === 'disconnected' && (
-                          <div className="space-y-6">
-                            <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto">
-                              <WifiOff className="w-12 h-12 text-slate-400" />
+                {/* Status Visualization */}
+                <div className="p-6 flex flex-col items-center">
+                  <div className="relative w-48 h-48 mb-6">
+                    <div
+                      className={`absolute inset-0 rounded-full ${
+                        state === 'disconnected'
+                          ? 'bg-red-100'
+                          : state === 'connected'
+                            ? 'bg-green-100'
+                            : state === 'scanning'
+                              ? 'bg-amber-100'
+                              : state === 'processing'
+                                ? 'bg-purple-100'
+                                : 'bg-green-100'
+                      } flex items-center justify-center`}
+                    >
+                      <div
+                        className={`w-36 h-36 rounded-full ${
+                          state === 'disconnected'
+                            ? 'bg-red-200'
+                            : state === 'connected'
+                              ? 'bg-green-200'
+                              : state === 'scanning'
+                                ? 'bg-amber-200'
+                                : state === 'processing'
+                                  ? 'bg-purple-200'
+                                  : 'bg-green-200'
+                        } flex items-center justify-center`}
+                      >
+                        <div
+                          className={`w-24 h-24 rounded-full ${
+                            state === 'disconnected'
+                              ? 'bg-red-300'
+                              : state === 'connected'
+                                ? 'bg-green-300'
+                                : state === 'scanning'
+                                  ? 'bg-amber-300'
+                                  : state === 'processing'
+                                    ? 'bg-purple-300'
+                                    : 'bg-green-300'
+                          } flex items-center justify-center`}
+                        >
+                          {state === 'scanning' || state === 'processing' ? (
+                            <div className="text-center">
+                              <div className="text-3xl font-bold">{currentPage}</div>
                             </div>
-                            <div className="space-y-2">
-                              <p className="text-xl font-semibold text-slate-800">No Connection</p>
-                              <p className="text-sm text-slate-500">
-                                Please check your scanner connection
-                              </p>
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                              {state === 'disconnected' && (
+                                <AlertCircle className="h-6 w-6 text-red-500" />
+                              )}
+                              {state === 'connected' && (
+                                <CheckCircle2 className="h-6 w-6 text-green-500" />
+                              )}
+                              {state === 'finished' && (
+                                <CheckCircle2 className="h-6 w-6 text-green-500" />
+                              )}
                             </div>
-                          </div>
-                        )}
-
-                        {state === 'connected' && (
-                          <div className="space-y-6">
-                            <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto">
-                              <Wifi className="w-12 h-12 text-green-500" />
-                            </div>
-                            <div className="space-y-2">
-                              <p className="text-xl font-semibold text-slate-800">Ready to Scan</p>
-                              <p className="text-sm text-slate-500">
-                                Place your notebook on the scanner
-                              </p>
-                            </div>
-                          </div>
-                        )}
-
-                        {state === 'scanning' && (
-                          <div className="flex flex-col items-center justify-center h-full">
-                            <div className="relative">
-                              <div className="text-7xl font-bold text-blue-600 mb-2">
-                                {currentPage}
-                              </div>
-                              <div className="text-sm text-slate-500 text-center">
-                                Scanning Page {currentPage}
-                              </div>
-                            </div>
-                            <div className="mt-8 w-full max-w-xs">
-                              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div className="h-full w-[30%] bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-500" />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {state === 'processing' && (
-                          <div className="flex flex-col items-center justify-center h-full">
-                            <div className="relative">
-                              <div className="text-7xl font-bold text-amber-600 mb-2">
-                                {currentPage}
-                              </div>
-                              <div className="text-sm text-slate-500 text-center">
-                                Processing Page {currentPage}
-                              </div>
-                            </div>
-                            <div className="mt-8 w-full max-w-xs">
-                              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div className="h-full w-[60%] bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500" />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {state === 'finished' && (
-                          <div className="space-y-6">
-                            <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto">
-                              <svg
-                                className="w-12 h-12 text-green-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                            </div>
-                            <div className="space-y-2">
-                              <p className="text-xl font-semibold text-slate-800">
-                                Notes Processed Successfully
-                              </p>
-                              <p className="text-sm text-slate-500">
-                                Redirecting to chat interface...
-                              </p>
-                            </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    {/* Animated elements for scanning/processing states */}
+                    {(state === 'scanning' || state === 'processing') && (
+                      <>
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white animate-ping" />
+                        <div
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white animate-ping"
+                          style={{ animationDelay: '0.5s' }}
+                        />
+                        <div
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white animate-ping"
+                          style={{ animationDelay: '1s' }}
+                        />
+                        <div
+                          className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white animate-ping"
+                          style={{ animationDelay: '1.5s' }}
+                        />
+                      </>
+                    )}
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex justify-between">
-                    <Button
-                      variant="outline"
-                      className="text-slate-600 border-slate-200 hover:bg-slate-50 px-6 py-4 text-sm font-medium"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      disabled={
-                        state === 'disconnected' || state === 'scanning' || state === 'processing'
-                      }
-                      className={`${
-                        state === 'disconnected' || state === 'scanning' || state === 'processing'
-                          ? 'bg-slate-400'
-                          : 'bg-blue-600 hover:bg-blue-700'
-                      } text-white px-6 py-4 text-sm font-medium`}
-                    >
-                      {state === 'scanning'
-                        ? 'Scanning...'
-                        : state === 'processing'
-                          ? 'Processing...'
-                          : 'Continue'}
-                    </Button>
+                  <div className="text-center">
+                    <h2 className="text-xl font-semibold mb-2">
+                      {state === 'disconnected' && 'Scanner Offline'}
+                      {state === 'connected' && 'Ready to Scan'}
+                      {state === 'scanning' && 'Scanning in Progress'}
+                      {state === 'processing' && 'Processing Content'}
+                      {state === 'finished' && 'Scan Complete'}
+                    </h2>
+                    <p className="text-sm text-slate-500 max-w-xs">
+                      {state === 'disconnected' &&
+                        'Please check your scanner connection and try again.'}
+                      {state === 'connected' &&
+                        'Your scanner is connected and ready to begin scanning.'}
+                      {state === 'scanning' &&
+                        `Currently scanning page ${currentPage} of your document.`}
+                      {state === 'processing' &&
+                        `Processing page ${currentPage}. Converting to interactive content.`}
+                      {state === 'finished' &&
+                        'Your document has been successfully processed and is ready to view.'}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
+
+                {/* Status Timeline */}
+                <div className="px-6 pb-6">
+                  <div className="flex justify-between items-center">
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          state !== 'disconnected'
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-slate-100 text-slate-400'
+                        }`}
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                      </div>
+                      <span className="text-xs mt-1">Connect</span>
+                    </div>
+                    <div
+                      className={`h-0.5 flex-1 mx-1 ${state !== 'disconnected' ? 'bg-green-200' : 'bg-slate-200'}`}
+                    />
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          state === 'scanning' || state === 'processing' || state === 'finished'
+                            ? 'bg-amber-100 text-amber-600'
+                            : 'bg-slate-100 text-slate-400'
+                        }`}
+                      >
+                        <Scan className="h-4 w-4" />
+                      </div>
+                      <span className="text-xs mt-1">Scan</span>
+                    </div>
+                    <div
+                      className={`h-0.5 flex-1 mx-1 ${
+                        state === 'processing' || state === 'finished'
+                          ? 'bg-purple-200'
+                          : 'bg-slate-200'
+                      }`}
+                    />
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          state === 'processing' || state === 'finished'
+                            ? 'bg-purple-100 text-purple-600'
+                            : 'bg-slate-100 text-slate-400'
+                        }`}
+                      >
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <span className="text-xs mt-1">Process</span>
+                    </div>
+                    <div
+                      className={`h-0.5 flex-1 mx-1 ${state === 'finished' ? 'bg-green-200' : 'bg-slate-200'}`}
+                    />
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          state === 'finished'
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-slate-100 text-slate-400'
+                        }`}
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                      </div>
+                      <span className="text-xs mt-1">Complete</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };

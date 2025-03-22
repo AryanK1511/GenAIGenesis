@@ -6,9 +6,10 @@ import { FC, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
-import { DefaultPromptsSection, SearchBar, AuroraText, ChatMessage } from '@/components';
+import { SearchBar, ChatMessage } from '@/components';
 import { ApiHelper } from '@/lib';
-import type { HeroProps, Message, SourceImage } from '@/lib';
+import type { HeroProps, Message } from '@/lib';
+import type { SourceImage } from '@/lib/types';
 
 export const Hero: FC<HeroProps> = ({ currentModel }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -122,7 +123,7 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pt-24 overflow-hidden">
+    <div className="min-h-screen flex flex-col pt-16 overflow-hidden bg-gradient-to-b bg-white">
       <AnimatePresence mode="wait">
         {!isChatMode ? (
           <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -133,20 +134,12 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                 transition={{ delay: 0.3, duration: 0.4, ease: 'easeInOut' }}
                 className="space-y-4"
               >
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-zinc-300">
-                  Welcome to <AuroraText>Voyager</AuroraText>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-zinc-800 pt-serif-font">
+                  Welcome to Voyager
                 </h1>
-                <p className="text-md sm:text-lg lg-text-xl text-zinc-500 max-w-2xl mx-auto">
-                  A personalized AI chatbot designed to know everything about{' '}
+                <p className="text-md sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto outfit-font">
+                  Chatbot for your notebook LMAOO
                 </p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.4, ease: 'easeInOut' }}
-                className="w-full max-w-4xl mx-auto"
-              >
-                <DefaultPromptsSection />
               </motion.div>
               <motion.div
                 initial={{ opacity: 0 }}
@@ -155,10 +148,6 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                 className="w-full max-w-2xl mx-auto"
               >
                 <SearchBar onSend={handleSendMessage} />
-                <p className="mt-2 text-xs text-zinc-500 text-center">
-                  Note: Voyager can make mistakes. Please verify important information and consider
-                  double-checking critical details.
-                </p>
               </motion.div>
             </div>
           </div>
@@ -169,7 +158,7 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: 'easeInOut' }}
-            className="flex-1 flex flex-col w-full"
+            className="flex-1 flex flex-col w-full bg-white"
           >
             <div
               ref={chatContainerRef}
@@ -213,15 +202,21 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                           </div>
                         </div>
                         <div className="flex-1 w-full">
-                          <div className="font-medium text-zinc-300 mb-1">Voyager</div>
-                          <div className="prose prose-invert max-w-none w-full">
+                          <div className="font-medium text-purple-900 mb-1 outfit-font">
+                            Voyager
+                          </div>
+                          <div className="prose prose-purple max-w-none w-full">
                             {isWaitingForStream ? (
                               <div className="flex items-center">
-                                <span className="text-zinc-400">Thinking</span>
+                                <span className="text-custom-blue">Thinking</span>
                                 <span className="ml-2 inline-flex">
-                                  <span className="animate-pulse text-purple-400 delay-0">.</span>
-                                  <span className="animate-pulse text-purple-400 delay-300">.</span>
-                                  <span className="animate-pulse text-purple-400 delay-600">.</span>
+                                  <span className="animate-pulse text-custom-blue delay-0">.</span>
+                                  <span className="animate-pulse text-custom-blue delay-300">
+                                    .
+                                  </span>
+                                  <span className="animate-pulse text-custom-blue delay-600">
+                                    .
+                                  </span>
                                 </span>
                               </div>
                             ) : (
@@ -240,20 +235,10 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.4, ease: 'easeInOut' }}
-              className="fixed bottom-0 left-0 right-0 p-4 bg-dark-background flex justify-center"
+              className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm border-purple-100 flex justify-center"
             >
               <div className="w-full max-w-2xl">
-                <div className="flex items-center justify-center mb-2">
-                  <span className="text-xs text-zinc-400">
-                    Using model:{' '}
-                    <span className="text-purple-400 font-medium">{currentModel.name}</span>
-                  </span>
-                </div>
                 <SearchBar onSend={handleSendMessage} disabled={isStreaming} />
-                <p className="mt-2 text-xs text-zinc-500 text-center">
-                  Note: Voyager can make mistakes. Please verify important information and consider
-                  double-checking critical details.
-                </p>
               </div>
             </motion.div>
           </motion.div>

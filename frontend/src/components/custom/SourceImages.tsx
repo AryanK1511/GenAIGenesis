@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import Image from 'next/image';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { X } from 'lucide-react';
 
 interface SourceImage {
@@ -29,13 +29,12 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
   }
 
   return (
-    <div className="mb-6">
-      <h3 className="text-sm font-medium text-slate-700 mb-3">Source Pages</h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {relevantImages.map((image, index) => (
           <div
             key={index}
-            className="relative group rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+            className="relative group rounded-xl overflow-hidden border border-purple-100 bg-white shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer transform hover:scale-[1.02]"
             onClick={() => setSelectedImage(image)}
           >
             <div className="aspect-[3/4] relative">
@@ -45,14 +44,17 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
                 fill
                 className="object-cover"
                 onError={handleImageError}
-                priority={index < 3}
-                sizes="(max-width: 768px) 50vw, 33vw"
+                priority={index < 4}
+                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-green-700/70 to-transparent">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-white">Page {image.page_number}</span>
-                <span className="text-xs text-white/80">
+                <span className="text-sm font-medium text-white outfit-font">
+                  Page {image.page_number}
+                </span>
+                <span className="text-xs font-medium text-purple-100">
                   {Math.round(image.score * 100)}% match
                 </span>
               </div>
@@ -62,14 +64,15 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
       </div>
 
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-4xl p-0">
+        <DialogTitle></DialogTitle>
+        <DialogContent className="max-w-3xl p-0 rounded-xl overflow-hidden bg-transparent border-none backdrop-blur-sm">
           {selectedImage && (
             <div className="relative">
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-4 right-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+                className="absolute top-4 right-4 z-10 rounded-full bg-purple-900/70 p-2.5 text-white hover:bg-purple-900/90 transition-colors duration-200"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
               <div className="relative aspect-[3/4] w-full">
                 <Image
@@ -83,8 +86,8 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
                 />
               </div>
               {imageError && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                  <p className="text-white text-center p-4">{imageError}</p>
+                <div className="absolute inset-0 flex items-center justify-center bg-purple-900/80">
+                  <p className="text-white text-center p-4 outfit-font">{imageError}</p>
                 </div>
               )}
             </div>

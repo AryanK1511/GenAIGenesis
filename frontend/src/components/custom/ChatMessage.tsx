@@ -2,15 +2,15 @@
 
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, memo } from 'react';
 import { Copy, User, Check } from 'lucide-react';
-import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components';
 import { SourceImages } from './SourceImages';
 import type { ChatMessageProps } from '@/lib';
+import Image from 'next/image';
 
-export const ChatMessage: FC<ChatMessageProps> = ({ role, content, sourceImages }) => {
+export const ChatMessage: FC<ChatMessageProps> = memo(({ role, content, sourceImages }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -22,25 +22,30 @@ export const ChatMessage: FC<ChatMessageProps> = ({ role, content, sourceImages 
   };
 
   return (
-    <div className="flex gap-4 py-4 w-full text-white">
-      <div className="">
+    <div className="flex gap-4 py-4 w-full text-gray-700">
+      <div className="flex-shrink-0">
         {role === 'user' ? (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-800 to-pink-800 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-custom-blue flex items-center justify-center">
             <User className="w-4 h-4 text-white" />
           </div>
         ) : (
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image
               src="/images/logo.png"
-              alt="Voyager Logo"
-              width={40}
-              height={40}
-              className="object-cover w-full h-full rounded-full"
+              alt="Voyager"
+              className="w-full h-full object-cover"
+              width={32}
+              height={32}
             />
           </div>
         )}
       </div>
-      <div className="flex-1 space-y-4">
+      <div className="flex-1 space-y-2">
+        {role === 'assistant' ? (
+          <div className="font-medium text-green-700/70 outfit-font">Voyager</div>
+        ) : (
+          <div className="font-medium text-custom-blue outfit-font">You</div>
+        )}
         {role === 'assistant' && sourceImages && sourceImages.length > 0 && (
           <SourceImages images={sourceImages} />
         )}
@@ -70,4 +75,6 @@ export const ChatMessage: FC<ChatMessageProps> = ({ role, content, sourceImages 
       </div>
     </div>
   );
-};
+});
+
+ChatMessage.displayName = 'ChatMessage';
