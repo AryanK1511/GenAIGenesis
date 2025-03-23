@@ -2,8 +2,7 @@
 
 import { type FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowRight, CheckCircle2, AlertCircle, Loader2, Scan, FileText } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, Scan, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Navbar } from './Navbar';
@@ -103,16 +102,13 @@ export const WebSocketStateManager: FC = () => {
             <div className="flex flex-col items-center md:items-start">
               <div className="flex flex-col md:flex-row items-center mb-4">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-[#1D1D3B] text-center md:text-left leading-tight">
-                  Transform Your Notes Into Interactive <br />
-                  <span className="relative">Study Materials</span>
+                  Robotics meets RAG to read and chat with your notebook <br />
                 </h1>
               </div>
             </div>
 
             <p className="text-gray-600 text-sm md:text-base">
-              Let AI help you understand, organize, and master
-              <br />
-              your content with interactive study materials
+              Pass your notebook to Inksight and it will turn that into an interactive chatbot.
             </p>
           </div>
 
