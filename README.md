@@ -12,7 +12,7 @@
 
 <div align="center">
     <p>
-        <a href="#">Demo</a> •
+        <a href="https://www.youtube.com/watch?v=sPitsMoR2Co">Demo</a> •
         <a href="./docs/README.md">Documentation</a>
     </p>
 </div>
