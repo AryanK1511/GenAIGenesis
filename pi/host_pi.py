@@ -3,6 +3,11 @@ import json
 import RPi.GPIO as GPIO
 from websockets import connect
 from flip import flip
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
 
 # Set up GPIO
 GPIO.setmode(GPIO.BOARD)
@@ -23,7 +28,9 @@ async def wait_for_start():
         
 
 async def main():
-    uri = "wss://a294-138-51-73-84.ngrok-free.app/ws/click-picture"
+    uri = os.getenv("WEBSOCKET_URI")
+    if not uri:
+        raise ValueError("WEBSOCKET_URI is not set in the .env file")
     async with connect(uri) as websocket:
         await asyncio.sleep(2)  # Wait for the connection to be established
         while True:

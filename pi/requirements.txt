@@ -1,2 +1,4 @@
 pigpio==1.78
+python-dotenv==1.0.1
+RPi.GPIO==0.7.1
 websockets==15.0.1

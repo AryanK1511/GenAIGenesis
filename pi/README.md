@@ -13,3 +13,9 @@
 
 ### Pigpio
 `sudo pigpiod`
+
+### Environment Variables
+Create a `.env` file in the project directory with the following content:
+```
+WEBSOCKET_URI=wss://your-websocket-uri-here
+```
