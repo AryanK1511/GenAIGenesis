@@ -135,10 +135,10 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                 className="space-y-4"
               >
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-zinc-800 pt-serif-font">
-                  Welcome to Voyager
+                  Welcome to Inksight
                 </h1>
                 <p className="text-md sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto outfit-font">
-                  Chatbot for your notebook LMAOO
+                  Ask any questions about your notebook
                 </p>
               </motion.div>
               <motion.div
