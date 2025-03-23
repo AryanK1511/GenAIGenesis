@@ -25,26 +25,26 @@ async def wait_for_start():
 async def main():
     uri = "wss://a294-138-51-73-84.ngrok-free.app/ws/click-picture"
     async with connect(uri) as websocket:
-        await asyncio.sleep(1)  # Wait for the connection to be established
+        await asyncio.sleep(2)  # Wait for the connection to be established
         while True:
             await wait_for_start()
 
             # Start the camera
             print("-- Sending 'start' action --")
             await send_message(websocket, "start")
+            await asyncio.sleep(3)
 
             # Perform 3 picture clicks
             for i in range(3):
+                print(f"--- Clicking picture {i + 1} ---")
+                await send_message(websocket, "click")
 
                 print("-- Flipping --")
                 flip()
                 print("-- Done Flipping --")
 
-                print(f"--- Clicking picture {i + 1} ---")
-                await send_message(websocket, "click")
-                await asyncio.sleep(5)  # Simulate delay between clicks
+                await asyncio.sleep(3)  # Simulate delay between clicks
 
-            # Process the accumulated text
             print("-- Sending 'end' action --")
             await send_message(websocket, "end")
 
