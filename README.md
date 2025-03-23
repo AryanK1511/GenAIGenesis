@@ -6,14 +6,14 @@
 [![YouTube](https://img.shields.io/badge/YouTube-Video-red?style=for-the-badge)](#)
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
 
-### Convert your handwritten notes into a chatbot
+### RAG meets robotics to read and chat with your notebook 📒🤖
 
-![Cover Image](./assets/logo.jpg)
+<img src="./assets/logo.png" width="400" alt="Cover Image">
 
 <div align="center">
     <p>
-        <a href="#c">Demo</a> •
-        <a href="./docs/README.md">Documentation</a> •
+        <a href="#">Demo</a> •
+        <a href="./docs/README.md">Documentation</a>
     </p>
 </div>
 

@@ -38,7 +38,7 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
         {relevantImages.map((image, index) => (
           <div
             key={index}
-            className="relative group rounded-xl overflow-hidden border border-purple-100 bg-white shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer transform hover:scale-[1.02]"
+            className="relative group rounded-xl overflow-hidden border border-purple-100 bg-white shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02]"
             onClick={() => setSelectedImage(image)}
           >
             <div className="aspect-[3/4] relative">
@@ -51,7 +51,7 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
                 priority={index < 4}
                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 transition-opacity duration-300" />
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-green-700/70 to-transparent">
               <div className="flex items-center justify-between">
@@ -74,7 +74,7 @@ export const SourceImages: FC<SourceImagesProps> = ({ images }) => {
             <div className="relative">
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-4 right-4 z-10 rounded-full bg-purple-900/70 p-2.5 text-white hover:bg-purple-900/90 transition-colors duration-200"
+                className="absolute top-4 right-4 z-10 rounded-full  transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
               </button>

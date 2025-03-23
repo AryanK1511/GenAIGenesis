@@ -11,3 +11,4 @@ export { SourceImages } from './custom/SourceImages';
 export { Badge } from './ui/badge';
 export { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 export { Textarea } from './ui/textarea';
+export { HomeWrapper } from './custom/HomeWrapper';
