@@ -1,3 +1,7 @@
+// frontend/src/components/custom/SourceImages.tsx
+
+'use client';
+
 import { FC, useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';

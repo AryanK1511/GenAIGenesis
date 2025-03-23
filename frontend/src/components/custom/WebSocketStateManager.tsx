@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, AlertCircle, Loader2, Scan, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Navbar } from './Navbar';
 
 type WebSocketState = 'disconnected' | 'connected' | 'scanning' | 'processing' | 'finished';
 
@@ -95,6 +96,7 @@ export const WebSocketStateManager: FC = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-white p-4">
+      <Navbar />
       <div className="w-full max-w-7xl mx-auto rounded-3xl overflow-hidden relative bg-gradient-to-br">
         <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16">
           <div className="flex flex-col justify-center space-y-8">

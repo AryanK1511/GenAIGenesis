@@ -33,7 +33,7 @@ export const ChatMessage: FC<ChatMessageProps> = memo(({ role, content, sourceIm
             <Image
               src="/images/logo.png"
               alt="Voyager"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover border-2 border-green-700/70 rounded-full"
               width={32}
               height={32}
             />
