@@ -8,10 +8,10 @@ import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import { SearchBar, ChatMessage } from '@/components';
 import { ApiHelper } from '@/lib';
-import type { HeroProps, Message } from '@/lib';
+import type { Message } from '@/lib';
 import type { SourceImage } from '@/lib/types';
 
-export const Hero: FC<HeroProps> = ({ currentModel }) => {
+export const Hero: FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isChatMode, setIsChatMode] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -42,7 +42,6 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
     try {
       const response = await apiHelper.current.post('chat', {
         query: message,
-        model: currentModel.id,
         history: messages.map((msg) => ({
           role: msg.role,
           content: msg.content,
@@ -123,11 +122,11 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pt-16 overflow-hidden bg-gradient-to-b bg-white">
+    <div className="min-h-screen flex flex-col pt-16 overflow-hidden bg-gradient-to-b bg-transparent">
       <AnimatePresence mode="wait">
         {!isChatMode ? (
           <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
-            <div className="w-full max-w-4xl mx-auto text-center space-y-8">
+            <div className="w-full max-w-4xl mx-auto text-center space-y-8 bg-white rounded-3xl py-8 ">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -135,10 +134,10 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                 className="space-y-4"
               >
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-zinc-800 pt-serif-font">
-                  Welcome to Voyager
+                  Welcome to Inksight
                 </h1>
                 <p className="text-md sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto outfit-font">
-                  Chatbot for your notebook LMAOO
+                  Ask any questions about your notebook
                 </p>
               </motion.div>
               <motion.div
@@ -194,7 +193,7 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                           <div className="w-8 h-8 rounded-full overflow-hidden">
                             <Image
                               src="/images/logo.png"
-                              alt="Voyager Logo"
+                              alt="Inksight Logo"
                               width={32}
                               height={32}
                               className="object-cover w-full h-full"
@@ -202,21 +201,17 @@ export const Hero: FC<HeroProps> = ({ currentModel }) => {
                           </div>
                         </div>
                         <div className="flex-1 w-full">
-                          <div className="font-medium text-purple-900 mb-1 outfit-font">
-                            Voyager
+                          <div className="font-medium text-green-700/70 mb-1 outfit-font">
+                            Inksight
                           </div>
                           <div className="prose prose-purple max-w-none w-full">
                             {isWaitingForStream ? (
                               <div className="flex items-center">
-                                <span className="text-custom-blue">Thinking</span>
+                                <span className="text-zinc-500">Thinking</span>
                                 <span className="ml-2 inline-flex">
-                                  <span className="animate-pulse text-custom-blue delay-0">.</span>
-                                  <span className="animate-pulse text-custom-blue delay-300">
-                                    .
-                                  </span>
-                                  <span className="animate-pulse text-custom-blue delay-600">
-                                    .
-                                  </span>
+                                  <span className="animate-pulse text-zinc-500 delay-0">.</span>
+                                  <span className="animate-pulse text-zinc-500 delay-300">.</span>
+                                  <span className="animate-pulse text-zinc-500 delay-600">.</span>
                                 </span>
                               </div>
                             ) : (

@@ -14,15 +14,7 @@ body {
   }
 }
 
-.outfit-font {
-  font-family: 'Outfit', sans-serif;
-}
-
-.pt-serif-font {
-  font-family: 'PT Serif', serif;
-}
-
-@layer base {
+.outfit-font @layer base {
   :root {
     --radius: 0.5rem;
     --color-1: 0 100% 63%;

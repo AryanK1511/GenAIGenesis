@@ -32,8 +32,8 @@ export const ChatMessage: FC<ChatMessageProps> = memo(({ role, content, sourceIm
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image
               src="/images/logo.png"
-              alt="Voyager"
-              className="w-full h-full object-cover"
+              alt="Inksight"
+              className="w-full h-full object-cover border-2 border-green-700/70 rounded-full"
               width={32}
               height={32}
             />
@@ -42,7 +42,7 @@ export const ChatMessage: FC<ChatMessageProps> = memo(({ role, content, sourceIm
       </div>
       <div className="flex-1 space-y-2">
         {role === 'assistant' ? (
-          <div className="font-medium text-green-700/70 outfit-font">Voyager</div>
+          <div className="font-medium text-green-700/70 outfit-font">Inksight</div>
         ) : (
           <div className="font-medium text-custom-blue outfit-font">You</div>
         )}

@@ -91,5 +91,5 @@ job_temp.csv
 job_outreach_logs.csv
 results.json
 ._*
-captures/
+temp_captures/
 .gcp/

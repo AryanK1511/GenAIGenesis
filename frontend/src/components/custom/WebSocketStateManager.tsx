@@ -2,10 +2,10 @@
 
 import { type FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowRight, CheckCircle2, AlertCircle, Loader2, Scan, FileText } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, Scan, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Navbar } from './Navbar';
 
 type WebSocketState = 'disconnected' | 'connected' | 'scanning' | 'processing' | 'finished';
 
@@ -94,38 +94,22 @@ export const WebSocketStateManager: FC = () => {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-white p-4">
+    <main className="min-h-screen flex items-center justify-centerp-4">
+      <Navbar />
       <div className="w-full max-w-7xl mx-auto rounded-3xl overflow-hidden relative bg-gradient-to-br">
         <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16">
           <div className="flex flex-col justify-center space-y-8">
             <div className="flex flex-col items-center md:items-start">
               <div className="flex flex-col md:flex-row items-center mb-4">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-[#1D1D3B] text-center md:text-left leading-tight">
-                  Transform Your Notes Into Interactive <br />
-                  <span className="relative">Study Materials</span>
+                  Robotics meets RAG to read and chat with your notebook <br />
                 </h1>
               </div>
             </div>
 
-            <p className="text-sm text-gray-600">Over 5k students are using Notebook Buddy</p>
-
             <p className="text-gray-600 text-sm md:text-base">
-              Let AI help you understand, organize, and master
-              <br />
-              your content with interactive study materials
+              Pass your notebook to Inksight and it will turn that into an interactive chatbot.
             </p>
-
-            <div>
-              <Link
-                href="https://github.com/yourusername/notebook-buddy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-[#1D1D3B] text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-all"
-              >
-                View on GitHub
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
           </div>
 
           <div className="flex items-center justify-center">
@@ -134,7 +118,7 @@ export const WebSocketStateManager: FC = () => {
                 <div className="flex items-center justify-between p-4 border-b">
                   <div className="flex items-center gap-2">
                     <div>
-                      <h3 className="font-medium text-slate-900">Scanner Status</h3>
+                      <h3 className="font-medium text-slate-900">Inksight Status</h3>
                       <p className="text-xs text-slate-500">Real-time monitoring</p>
                     </div>
                   </div>
@@ -234,7 +218,7 @@ export const WebSocketStateManager: FC = () => {
 
                   <div className="text-center">
                     <h2 className="text-xl font-semibold mb-2">
-                      {state === 'disconnected' && 'Scanner Offline'}
+                      {state === 'disconnected' && 'Inksight Offline'}
                       {state === 'connected' && 'Ready to Scan'}
                       {state === 'scanning' && 'Scanning in Progress'}
                       {state === 'processing' && 'Processing Content'}
@@ -242,9 +226,9 @@ export const WebSocketStateManager: FC = () => {
                     </h2>
                     <p className="text-sm text-slate-500 max-w-xs">
                       {state === 'disconnected' &&
-                        'Please check your scanner connection and try again.'}
+                        'Please check your Inksight connection and try again.'}
                       {state === 'connected' &&
-                        'Your scanner is connected and ready to begin scanning.'}
+                        'Your Inksight is connected and ready to begin scanning.'}
                       {state === 'scanning' &&
                         `Currently scanning page ${currentPage} of your document.`}
                       {state === 'processing' &&
