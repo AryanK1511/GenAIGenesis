@@ -40,11 +40,15 @@ def flip():
         set_flipper_angle(0, pi)
         time.sleep(0.5) # Wait for the flipper to reach 0 degrees
 
-        set_licker_angle(180, pi)
-        time.sleep(2) # Wait for the licker to get the page up
+        set_licker_angle(100, pi)
+        time.sleep(1.15) # Wait for the licker to get the page up
+        set_licker_angle(90, pi) # Stop moving it
+        
+        set_flipper_angle(100, pi)
+        time.sleep(2) # Wait for the flipper to flip the page
 
-        set_flipper_angle(180, pi)
-        time.sleep(1) # Wait for the flipper to flip the page
+        set_licker_angle(0, pi)
+        time.sleep(0.5) # Wait for the licker to get the pages back to the original position
 
     except KeyboardInterrupt:
         pass
