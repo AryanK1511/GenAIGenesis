@@ -1,4 +1,4 @@
-# Backend
+# InkSight Backend
 
 ## Running the backend locally
 

@@ -19,24 +19,23 @@ class OCRService:
 
     def _download_from_gcs(self, image_url: str) -> str:
         try:
-            # Parse URL
             parsed_url = urlparse(image_url)
-            if parsed_url.netloc != "storage.googleapis.com":
-                return image_url
 
-            # Extract bucket and blob path from URL
             path_parts = parsed_url.path.strip("/").split("/")
             bucket_name = path_parts[0]
             blob_path = "/".join(path_parts[1:])
 
-            # Create a temporary file
             temp_dir = tempfile.gettempdir()
             temp_path = os.path.join(temp_dir, os.path.basename(blob_path))
 
-            # Download the file
             bucket = self.storage_client.bucket(bucket_name)
             blob = bucket.blob(blob_path)
-            blob.download_to_filename(temp_path)
+
+            blob.cache_control = "no-cache, max-age=0"
+
+            blob.reload()
+
+            blob.download_to_filename(temp_path, if_generation_match=blob.generation)
 
             return temp_path
         except Exception as e:
@@ -45,8 +44,9 @@ class OCRService:
 
     def ocr_image(self, image_path: str) -> str:
         try:
-            # Download from GCS if needed
             local_path = self._download_from_gcs(image_path)
+
+            CustomLogger.create_log("info", f"Local path: {local_path}")
 
             with open(local_path, "rb") as image_file:
                 content = image_file.read()
@@ -67,7 +67,6 @@ class OCRService:
                             )
                             extracted_text += word_text + " "
 
-            # Clean up temporary file if it was downloaded from GCS
             if local_path != image_path:
                 os.remove(local_path)
 
@@ -81,9 +80,7 @@ class OCRService:
         try:
             all_text = []
 
-            # Handle GCS public URL
             if base_path.startswith("https://storage.googleapis.com/"):
-                # List files in GCS bucket
                 parsed_url = urlparse(base_path)
                 path_parts = parsed_url.path.strip("/").split("/")
                 bucket_name = path_parts[0]
@@ -108,7 +105,6 @@ class OCRService:
                     page_text = self.ocr_image(image_url)
                     all_text.append(page_text)
             else:
-                # Handle local path
                 image_files = [
                     f for f in os.listdir(base_path) if f.endswith((".jpg", ".JPG"))
                 ]
